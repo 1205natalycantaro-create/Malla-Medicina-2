@@ -1,1440 +1,609 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Malla Curricular Medicina</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-}
-
-body{
-
-background:#edf3f8;
-display:flex;
-min-height:100vh;
-
-}
-
-aside{
-
-width:320px;
-background:white;
-padding:25px;
-box-shadow:0 0 20px rgba(0,0,0,.1);
-position:sticky;
-top:0;
-height:100vh;
-overflow:auto;
-
-}
-
-aside h1{
-
-font-size:24px;
-margin-bottom:20px;
-color:#355C7D;
-
-}
-
-.info{
-
-margin-bottom:18px;
-
-}
-
-.info h3{
-
-margin-bottom:8px;
-
-}
-
-.progress{
-
-width:100%;
-height:18px;
-background:#d9d9d9;
-border-radius:20px;
-overflow:hidden;
-
-}
-
-.progress div{
-
-height:100%;
-background:#4CAF50;
-width:0%;
-
-}
-
-label{
-
-display:block;
-margin-top:12px;
-
-}
-
-input[type=checkbox]{
-
-margin-right:8px;
-
-}
-
-main{
-
-flex:1;
-padding:25px;
-overflow:auto;
-
-}
-
-.grid{
-
-display:grid;
-grid-template-columns:repeat(13,minmax(260px,1fr));
-gap:18px;
-
-}
-
-.column{
-
-background:#f7fbff;
-padding:15px;
-border-radius:15px;
-box-shadow:0 5px 10px rgba(0,0,0,.08);
-
-}
-
-.column h2{
-
-text-align:center;
-margin-bottom:15px;
-color:#355C7D;
-
-}
-
-.course{
-
-background:white;
-padding:12px;
-margin-bottom:10px;
-border-radius:10px;
-cursor:pointer;
-transition:.3s;
-border-left:6px solid #4CAF50;
-position:relative;
-
-}
-
-.course:hover{
-
-transform:translateY(-2px);
-
-}
-
-.course.locked{
-
-background:#dddddd;
-border-left:6px solid #999;
-cursor:not-allowed;
-opacity:.7;
-
-}
-
-.course.completed{
-
-background:#b9f6ca;
-border-left:6px solid #009688;
-
-}
-
-.course h4{
-
-font-size:15px;
-
-}
-
-.course small{
-
-color:#555;
-
-}
-
-.tooltip{
-
-position:absolute;
-bottom:105%;
-left:0;
-background:#222;
-color:white;
-padding:8px;
-border-radius:8px;
-font-size:12px;
-display:none;
-z-index:100;
-
-}
-
-.course.locked:hover .tooltip{
-
-display:block;
-
-}
-
-</style>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Malla Curricular Interactiva - Medicina Humana</title>
+  <style>
+    :root {
+      /* Paleta inspirada en el patrón floral azul y crema */
+      --bg-cream: #f6f3eb;
+      --card-bg: #fcfbfa;
+      --indigo-dark: #1b325f;
+      --indigo-main: #2b4c7e;
+      --indigo-soft: #4a6999;
+      --indigo-light: #e8eef6;
+      --border-blue: #b3c5dd;
+      
+      --approved-bg: #edf4fa;
+      --approved-border: #2b4c7e;
+      --approved-text: #1b325f;
+      
+      --locked-bg: #e2e1dc;
+      --locked-border: #c4c2ba;
+      --locked-text: #8c8980;
+      
+      --shadow: 0 4px 10px rgba(27, 50, 95, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Georgia', 'Segoe UI', serif, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-cream);
+      color: var(--indigo-dark);
+      padding: 20px;
+    }
+
+    header {
+      background-color: var(--card-bg);
+      padding: 20px 25px;
+      border-radius: 12px;
+      border: 1px solid var(--border-blue);
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      color: var(--indigo-dark);
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+
+    .stats-panel {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .stat-box {
+      background: var(--indigo-light);
+      border: 1px solid var(--border-blue);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: var(--indigo-dark);
+      font-weight: 600;
+    }
+
+    .requirements-panel {
+      background-color: var(--card-bg);
+      padding: 15px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border-blue);
+      box-shadow: var(--shadow);
+      margin-bottom: 25px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .requirements-panel h3 {
+      font-size: 0.95rem;
+      color: var(--indigo-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+      cursor: pointer;
+      user-select: none;
+      background: var(--bg-cream);
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border-blue);
+      color: var(--indigo-dark);
+    }
+
+    .checkbox-label input {
+      accent-color: var(--indigo-main);
+      width: 16px;
+      height: 16px;
+    }
+
+    .btn-reset {
+      background-color: var(--indigo-main);
+      color: #ffffff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-left: auto;
+      transition: background 0.2s;
+    }
+
+    .btn-reset:hover {
+      background-color: var(--indigo-dark);
+    }
+
+    .grid-container {
+      display: flex;
+      gap: 15px;
+      overflow-x: auto;
+      padding-bottom: 20px;
+    }
+
+    .column {
+      flex: 0 0 260px;
+      background-color: rgba(252, 251, 250, 0.7);
+      border-radius: 10px;
+      border: 1px dashed var(--border-blue);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .column-title {
+      font-weight: bold;
+      font-size: 0.95rem;
+      text-align: center;
+      padding: 8px;
+      background-color: var(--indigo-light);
+      border-radius: 6px;
+      color: var(--indigo-dark);
+      border: 1px solid var(--border-blue);
+    }
+
+    .course-card {
+      position: relative;
+      background-color: var(--card-bg);
+      border: 1.5px solid var(--border-blue);
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 85px;
+    }
+
+    .course-card:hover:not(.locked) {
+      transform: translateY(-2px);
+      border-color: var(--indigo-main);
+      box-shadow: 0 6px 12px rgba(27, 50, 95, 0.12);
+    }
+
+    .course-name {
+      font-size: 0.88rem;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 6px;
+      color: var(--indigo-dark);
+    }
+
+    .course-credits {
+      font-size: 0.75rem;
+      color: var(--indigo-soft);
+      font-weight: 500;
+    }
+
+    /* Estado: Aprobado */
+    .course-card.approved {
+      background-color: var(--approved-bg);
+      border-color: var(--approved-border);
+    }
+
+    .course-card.approved .course-name {
+      color: var(--approved-text);
+    }
+
+    .course-card.approved::after {
+      content: "✓";
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-weight: bold;
+      color: var(--indigo-main);
+    }
+
+    /* Estado: Bloqueado */
+    .course-card.locked {
+      background-color: var(--locked-bg);
+      border-color: var(--locked-border);
+      cursor: not-allowed;
+      opacity: 0.75;
+    }
+
+    .course-card.locked .course-name {
+      color: var(--locked-text);
+    }
+
+    .course-card.locked .course-credits {
+      color: #a09d96;
+    }
+
+    .course-card.locked::after {
+      content: "🔒";
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 0.75rem;
+    }
+
+    /* Tooltip personalizado */
+    .tooltip {
+      visibility: hidden;
+      width: 220px;
+      background-color: var(--indigo-dark);
+      color: #fff;
+      text-align: left;
+      border-radius: 6px;
+      padding: 8px 10px;
+      position: absolute;
+      z-index: 100;
+      bottom: 105%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.2s;
+      font-size: 0.75rem;
+      line-height: 1.3;
+      pointer-events: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      font-family: sans-serif;
+    }
+
+    .tooltip::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: var(--indigo-dark) transparent transparent transparent;
+    }
+
+    .course-card.locked:hover .tooltip {
+      visibility: visible;
+      opacity: 1;
+    }
+  </style>
 </head>
-
 <body>
 
-<aside>
-
-<h1>Medicina Humana</h1>
-
-<div class="info">
-
-<h3>Avance</h3>
-
-<div class="progress">
-
-<div id="bar"></div>
-
-</div>
-
-<p id="percent">0%</p>
-
-</div>
-
-<div class="info">
-
-<h3>Créditos aprobados</h3>
-
-<p id="credits">0</p>
-
-</div>
-
-<div class="info">
-
-<h3>Requisitos</h3>
-
-<label>
-
-<input id="englishA2" type="checkbox">
-
-Inglés A2
-
-</label>
-
-<label>
-
-<input id="englishB2" type="checkbox">
-
-Inglés B2
-
-</label>
-
-<label>
-
-<input id="medicalExam" type="checkbox">
-
-Examen suficiencia médica
-
-</label>
-
-</div>
-
-<div class="info">
-
-<h3>Créditos electivos</h3>
-
-<input id="electiveCredits" type="number" min="0" max="20" value="0">
-
-</div>
-
-<button id="reset">
-
-Reiniciar progreso
-
-</button>
-
-</aside>
-
-<main>
-
-<div class="grid" id="grid">
-
-<!-- Aquí aparecerán los 13 ciclos -->
-
-</div>
-
-</main>
-
-<script>
-
-const courses=[];
-
-let state={};
-
-function save(){
-
-localStorage.setItem("medicina_estado",JSON.stringify(state));
-
-}
-
-function load(){
-
-const s=localStorage.getItem("medicina_estado");
-
-if(s){
-
-state=JSON.parse(s);
-
-}
-
-}
-
-function approved(id){
-
-return state[id]===true;
-
-}
-
-function updateProgress(){
-
-let total=courses.length;
-
-let done=0;
-
-let credits=0;
-
-courses.forEach(c=>{
-
-if(approved(c.id)){
-
-done++;
-
-credits+=c.credits;
-
-}
-
-});
-
-document.getElementById("credits").innerHTML=credits;
-
-let p=Math.round(done*100/total);
-
-document.getElementById("percent").innerHTML=p+"%";
-
-document.getElementById("bar").style.width=p+"%";
-
-save();
-
-}
-function requirementsMet(course){
-
-    if(!course.prereq || course.prereq.length===0){
-        return true;
+  <header>
+    <h1>Malla Curricular - Medicina Humana</h1>
+    <div class="stats-panel">
+      <div class="stat-box">Créditos Aprobados: <span id="total-credits">0</span> / 223</div>
+      <div class="stat-box">Cursos Aprobados: <span id="approved-courses">0</span> / 61</div>
+      <button class="btn-reset" onclick="resetProgress()">Reiniciar Progreso</button>
+    </div>
+  </header>
+
+  <div class="requirements-panel">
+    <h3>Requisitos Idioma y Suficiencia:</h3>
+    <label class="checkbox-label">
+      <input type="checkbox" id="inglesA2" onchange="toggleRequirement('inglesA2')">
+      Suficiencia Inglés A2
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="inglesB2" onchange="toggleRequirement('inglesB2')">
+      Suficiencia Inglés B2 (o superior)
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="examenSuficiencia" onchange="toggleRequirement('examenSuficiencia')">
+      Examen de Suficiencia Médica
+    </label>
+  </div>
+
+  <div class="grid-container" id="grid"></div>
+
+  <script>
+    const coursesData = [
+      // CICLO 1
+      { id: "q", name: "Química", credits: 5, cycle: 1, reqs: [] },
+      { id: "m", name: "Matemática", credits: 3, cycle: 1, reqs: [] },
+      { id: "lyo", name: "Lengua y Oratoria", credits: 3, cycle: 1, reqs: [] },
+      { id: "im", name: "Introducción a la Medicina", credits: 2, cycle: 1, reqs: [] },
+      { id: "du", name: "Desempeño Universitario", credits: 2, cycle: 1, reqs: [] },
+      { id: "bcm", name: "Biología Celular y Molecular", credits: 6, cycle: 1, reqs: [] },
+
+      // CICLO 2
+      { id: "rg", name: "Redacción General", credits: 3, cycle: 2, reqs: ["lyo"] },
+      { id: "rn", name: "Realidad Nacional", credits: 2, cycle: 2, reqs: ["lyo", "du"] },
+      { id: "morf1", name: "Morfofisiología I", credits: 6, cycle: 2, reqs: ["bcm"] },
+      { id: "inv", name: "Intro. a la Investigación", credits: 3, cycle: 2, reqs: [] },
+      { id: "bq", name: "Bioquímica", credits: 5, cycle: 2, reqs: ["q"] },
+      { id: "ag", name: "Anatomía General", credits: 3, cycle: 2, reqs: ["bcm"] },
+
+      // CICLO 3
+      { id: "ea", name: "Educación Ambiental", credits: 2, cycle: 3, reqs: [] },
+      { id: "eg", name: "Estadística General", credits: 4, cycle: 3, reqs: ["m"] },
+      { id: "fil", name: "Filosofía", credits: 3, cycle: 3, reqs: [] },
+      { id: "gm", name: "Genética Médica", credits: 3, cycle: 3, reqs: ["bcm"] },
+      { id: "inm", name: "Inmunología", credits: 3, cycle: 3, reqs: ["morf1"] },
+      { id: "morf2", name: "Morfofisiología II", credits: 7, cycle: 3, reqs: ["ag", "morf1"] },
+
+      // CICLO 4
+      { id: "bioet", name: "Bioética", credits: 2, cycle: 4, reqs: ["im", "rg"] },
+      { id: "dc", name: "Desarrollo y Crecimiento", credits: 3, cycle: 4, reqs: ["bcm"] },
+      { id: "fisio1", name: "Fisiopatología I", credits: 4, cycle: 4, reqs: ["morf2"] },
+      { id: "infec", name: "Infectología Básica", credits: 5, cycle: 4, reqs: ["bq", "morf1"] },
+      { id: "morf3", name: "Morfofisiología III", credits: 7, cycle: 4, reqs: ["ag", "morf1"] },
+
+      // CICLO 5
+      { id: "bioest", name: "Bioestadística", credits: 2, cycle: 5, reqs: ["eg"] },
+      { id: "fisio2", name: "Fisiopatología II", credits: 5, cycle: 5, reqs: ["morf2"] },
+      { id: "fmi", name: "Fundamentos de Medicina Interc.", credits: 2, cycle: 5, reqs: ["fil", "rn"] },
+      { id: "morf4", name: "Morfofisiología IV", credits: 6, cycle: 5, reqs: ["morf3"] },
+      { id: "sm", name: "Salud Mental", credits: 4, cycle: 5, reqs: ["fil"] },
+
+      // CICLO 6
+      { id: "apat", name: "Anatomía Patológica", credits: 4, cycle: 6, reqs: ["fisio2"] },
+      { id: "ad", name: "Apoyo al Diagnóstico", credits: 3, cycle: 6, reqs: ["morf4"] },
+      { id: "farm", name: "Farmacología", credits: 6, cycle: 6, reqs: ["infec"] },
+      { id: "sem", name: "Semiología", credits: 5, cycle: 6, reqs: ["fisio1", "fisio2", "inm", "morf2", "morf3", "morf4"] },
+      { id: "semsim", name: "Semiología basada en la simula", credits: 2, cycle: 6, reqs: ["fisio1", "fisio2", "inm", "morf2", "morf3", "morf4"] },
+
+      // CICLO 7
+      { id: "spc", name: "Seguridad del Paciente y Calid", credits: 2, cycle: 7, reqs: ["bioet"] },
+      { id: "nps", name: "Nutrición y Prácticas Saludab", credits: 4, cycle: 7, reqs: ["farm"] },
+      { id: "mi", name: "Metodología de la Investigació", credits: 2, cycle: 7, reqs: ["bioest"] },
+      { id: "med1", name: "Medicina Interna I", credits: 10, cycle: 7, reqs: ["apat", "sem", "semsim"] },
+      { id: "epid", name: "Epidemiología", credits: 4, cycle: 7, reqs: ["bioest"] },
+
+      // CICLO 8
+      { id: "aps", name: "Atención Primaria en Salud", credits: 4, cycle: 8, reqs: ["epid"] },
+      { id: "mbe", name: "Medicina Basada en la Evidenci", credits: 2, cycle: 8, reqs: ["epid", "mi"] },
+      { id: "med2", name: "Medicina Interna II", credits: 10, cycle: 8, reqs: ["med1"] },
+      { id: "sp", name: "Salud Pública", credits: 4, cycle: 8, reqs: ["epid"] },
+
+      // CICLO 9
+      { id: "med3", name: "Medicina Interna III", credits: 10, cycle: 9, reqs: ["med2"] },
+      { id: "ml", name: "Medicina Legal", credits: 2, cycle: 9, reqs: ["bioet", "sem", "semsim"] },
+      { id: "sci", name: "Simulación Clínica Integrada", credits: 3, cycle: 9, reqs: ["med2"] },
+      { id: "terap", name: "Terapéutica", credits: 2, cycle: 9, reqs: ["med2"] },
+      { id: "tes1", name: "Tesis I", credits: 2, cycle: 9, reqs: ["mbe"] },
+
+      // CICLO 10
+      { id: "ac1", name: "Análisis de Casos I", credits: 2, cycle: 10, reqs: ["med3", "sci", "terap"] },
+      { id: "cir", name: "Cirugía", credits: 11, cycle: 10, reqs: ["med3", "sci"] },
+      { id: "cprf", name: "Cuidados Paliat y Rehabili Fis", credits: 2, cycle: 10, reqs: ["bioet", "terap"] },
+      { id: "eco", name: "Ecografía", credits: 2, cycle: 10, reqs: ["ad", "sem"] },
+      { id: "sq", name: "Simulación Quirúrgica", credits: 2, cycle: 10, reqs: ["med3", "sci"] },
+
+      // CICLO 11
+      { id: "go", name: "Ginecología y Obstetricia", credits: 6, cycle: 11, reqs: ["cir", "sq"] },
+      { id: "ped", name: "Pediatría", credits: 10, cycle: 11, reqs: ["med3", "sci"] },
+      { id: "sgo", name: "Simulación Gineco-Obstetricia", credits: 2, cycle: 11, reqs: ["cir", "sq"] },
+      { id: "sped", name: "Simulación Pediátrica", credits: 2, cycle: 11, reqs: ["med3", "sci"] },
+      { id: "tes2", name: "Tesis II", credits: 2, cycle: 11, reqs: ["tes1"] },
+
+      // CICLO 12
+      { id: "ac2", name: "Análisis de Casos II", credits: 2, cycle: 12, reqs: ["ac1", "req:inglesA2"] },
+      { id: "gs", name: "Gerencia en Salud", credits: 2, cycle: 12, reqs: ["aps", "req:inglesA2"] },
+      { id: "ib", name: "Informática Biomédica", credits: 2, cycle: 12, reqs: ["aps", "req:inglesA2"] },
+      { id: "preint", name: "Pre-Internado", credits: 16, cycle: 12, reqs: ["c1_c11_all", "req:inglesB2"] },
+
+      // CICLO 13 (INTERNADO)
+      { id: "igo", name: "Inter en Ginecolo y Obstetric", credits: 10, cycle: 13, reqs: ["c1_c12_all", "electives_8", "req:examenSuficiencia"] },
+      { id: "icir", name: "Internado en Cirugía", credits: 10, cycle: 13, reqs: ["c1_c12_all", "electives_8", "req:examenSuficiencia"] },
+      { id: "imed", name: "Internado en Medicina", credits: 10, cycle: 13, reqs: ["c1_c12_all", "electives_8", "req:examenSuficiencia"] },
+      { id: "iped", name: "Internado en Pediatría", credits: 10, cycle: 13, reqs: ["c1_c12_all", "electives_8", "req:examenSuficiencia"] },
+      { id: "ti", name: "Trabajo de investigación", credits: 1, cycle: 13, reqs: ["c1_c12_all", "electives_8", "req:examenSuficiencia"] },
+
+      // ELECTIVOS
+      { id: "e1", name: "Uso Corr. de Antibi y M. de In", credits: 2, cycle: 14, isElective: true, reqs: [] },
+      { id: "e2", name: "Simulación en Salud", credits: 2, cycle: 14, isElective: true, reqs: [] },
+      { id: "e3", name: "Radioanatomía", credits: 2, cycle: 14, isElective: true, reqs: [] },
+      { id: "e4", name: "Proc cognit y teorías del Apre", credits: 2, cycle: 14, isElective: true, reqs: [] },
+      { id: "e5", name: "Primeros Auxilios (E)", credits: 2, cycle: 14, isElective: true, reqs: [] },
+    ];
+
+    let state = {
+      approved: new Set(),
+      requirements: {
+        inglesA2: false,
+        inglesB2: false,
+        examenSuficiencia: false
+      }
+    };
+
+    function loadState() {
+      const saved = localStorage.getItem("malla_medicina_state");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        state.approved = new Set(parsed.approved);
+        state.requirements = parsed.requirements || state.requirements;
+      }
+      
+      document.getElementById("inglesA2").checked = state.requirements.inglesA2;
+      document.getElementById("inglesB2").checked = state.requirements.inglesB2;
+      document.getElementById("examenSuficiencia").checked = state.requirements.examenSuficiencia;
     }
 
-    for(const req of course.prereq){
-
-        if(req==="ENGLISH_A2"){
-
-            if(!document.getElementById("englishA2").checked){
-                return false;
-            }
-
-        }
-
-        else if(req==="ENGLISH_B2"){
-
-            if(!document.getElementById("englishB2").checked){
-                return false;
-            }
-
-        }
-
-        else if(req==="MEDICAL_EXAM"){
-
-            if(!document.getElementById("medicalExam").checked){
-                return false;
-            }
-
-        }
-
-        else if(req==="ELECTIVE_8"){
-
-            const e=parseInt(document.getElementById("electiveCredits").value)||0;
-
-            if(e<8){
-                return false;
-            }
-
-        }
-
-        else{
-
-            if(!approved(req)){
-                return false;
-            }
-
-        }
-
+    function saveState() {
+      localStorage.setItem("malla_medicina_state", JSON.stringify({
+        approved: Array.from(state.approved),
+        requirements: state.requirements
+      }));
     }
 
-    return true;
+    function getRequirementStatus(course) {
+      let missing = [];
 
-}
+      for (let req of course.reqs) {
+        if (req.startsWith("req:")) {
+          const reqKey = req.replace("req:", "");
+          if (!state.requirements[reqKey]) {
+            if (reqKey === "inglesA2") missing.push("Acreditación Inglés A2");
+            if (reqKey === "inglesB2") missing.push("Acreditación Inglés B2");
+            if (reqKey === "examenSuficiencia") missing.push("Examen Suficiencia Médica");
+          }
+        } else if (req === "c1_c11_all") {
+          const missingC1_11 = coursesData.filter(c => c.cycle <= 11 && !state.approved.has(c.id));
+          if (missingC1_11.length > 0) missing.push(`Aprobar todos los cursos hasta Ciclo XI (${missingC1_11.length} pendientes)`);
+        } else if (req === "c1_c12_all") {
+          const missingC1_12 = coursesData.filter(c => c.cycle <= 12 && !state.approved.has(c.id));
+          if (missingC1_12.length > 0) missing.push(`Aprobar todos los cursos hasta Ciclo XII (${missingC1_12.length} pendientes)`);
+        } else if (req === "electives_8") {
+          const electiveCredits = coursesData
+            .filter(c => c.isElective && state.approved.has(c.id))
+            .reduce((acc, c) => acc + c.credits, 0);
+          if (electiveCredits < 8) missing.push(`Mínimo 8 créditos electivos (Llevas ${electiveCredits}/8)`);
+        } else {
+          if (!state.approved.has(req)) {
+            const reqCourse = coursesData.find(c => c.id === req);
+            if (reqCourse) missing.push(reqCourse.name);
+          }
+        }
+      }
 
-function missingRequirements(course){
+      return { isUnlocked: missing.length === 0, missing };
+    }
 
-    let list=[];
+    function toggleCourse(courseId) {
+      const course = coursesData.find(c => c.id === courseId);
+      const { isUnlocked } = getRequirementStatus(course);
 
-    if(!course.prereq) return list;
+      if (!isUnlocked && !state.approved.has(courseId)) return;
 
-    course.prereq.forEach(req=>{
+      if (state.approved.has(courseId)) {
+        unapproveRecursive(courseId);
+      } else {
+        state.approved.add(courseId);
+      }
 
-        if(req==="ENGLISH_A2"){
+      saveState();
+      render();
+    }
 
-            if(!document.getElementById("englishA2").checked){
+    function unapproveRecursive(courseId) {
+      state.approved.delete(courseId);
 
-                list.push("Inglés A2");
+      coursesData.forEach(c => {
+        if (!state.approved.has(c.id)) return;
 
+        let depends = false;
+        if (c.reqs.includes(courseId)) depends = true;
+        if (c.reqs.includes("c1_c11_all")) {
+          const sourceCourse = coursesData.find(sc => sc.id === courseId);
+          if (sourceCourse && sourceCourse.cycle <= 11) depends = true;
+        }
+        if (c.reqs.includes("c1_c12_all")) {
+          const sourceCourse = coursesData.find(sc => sc.id === courseId);
+          if (sourceCourse && sourceCourse.cycle <= 12) depends = true;
+        }
+        if (c.reqs.includes("electives_8")) {
+          const sourceCourse = coursesData.find(sc => sc.id === courseId);
+          if (sourceCourse && sourceCourse.isElective) depends = true;
+        }
+
+        if (depends) {
+          unapproveRecursive(c.id);
+        }
+      });
+    }
+
+    function toggleRequirement(reqKey) {
+      state.requirements[reqKey] = document.getElementById(reqKey).checked;
+      
+      if (!state.requirements[reqKey]) {
+        coursesData.forEach(c => {
+          if (state.approved.has(c.id)) {
+            const { isUnlocked } = getRequirementStatus(c);
+            if (!isUnlocked) {
+              unapproveRecursive(c.id);
             }
+          }
+        });
+      }
 
-        }
+      saveState();
+      render();
+    }
 
-        else if(req==="ENGLISH_B2"){
+    function resetProgress() {
+      if (confirm("¿Deseas reiniciar completamente el progreso registrado?")) {
+        state.approved.clear();
+        state.requirements = { inglesA2: false, inglesB2: false, examenSuficiencia: false };
+        saveState();
+        loadState();
+        render();
+      }
+    }
 
-            if(!document.getElementById("englishB2").checked){
+    function render() {
+      const grid = document.getElementById("grid");
+      grid.innerHTML = "";
 
-                list.push("Inglés B2");
+      const cycleTitles = {
+        1: "Ciclo 1", 2: "Ciclo 2", 3: "Ciclo 3", 4: "Ciclo 4",
+        5: "Ciclo 5", 6: "Ciclo 6", 7: "Ciclo 7", 8: "Ciclo 8",
+        9: "Ciclo 9", 10: "Ciclo 10", 11: "Ciclo 11", 12: "Ciclo 12",
+        13: "Ciclo 13 (Internado)", 14: "Cursos Electivos"
+      };
 
-            }
+      for (let c = 1; c <= 14; c++) {
+        const column = document.createElement("div");
+        column.className = "column";
 
-        }
-
-        else if(req==="MEDICAL_EXAM"){
-
-            if(!document.getElementById("medicalExam").checked){
-
-                list.push("Examen de suficiencia médica");
-
-            }
-
-        }
-
-        else if(req==="ELECTIVE_8"){
-
-            const e=parseInt(document.getElementById("electiveCredits").value)||0;
-
-            if(e<8){
-
-                list.push("8 créditos electivos");
-
-            }
-
-        }
-
-        else{
-
-            if(!approved(req)){
-
-                const c=courses.find(x=>x.id===req);
-
-                if(c){
-
-                    list.push(c.name);
-
-                }
-
-            }
-
-        }
-
-    });
-
-    return list;
-
-}
-
-function uncheckDependents(id){
-
-    courses.forEach(c=>{
-
-        if(c.prereq && c.prereq.includes(id)){
-
-            if(state[c.id]){
-
-                state[c.id]=false;
-
-                uncheckDependents(c.id);
-
-            }
-
-        }
-
-    });
-
-}
-
-function render(){
-
-    const grid=document.getElementById("grid");
-
-    grid.innerHTML="";
-
-    const grouped={};
-
-    courses.forEach(c=>{
-
-        if(!grouped[c.cycle]){
-
-            grouped[c.cycle]=[];
-
-        }
-
-        grouped[c.cycle].push(c);
-
-    });
-
-    Object.keys(grouped).forEach(cycle=>{
-
-        const column=document.createElement("div");
-
-        column.className="column";
-
-        const title=document.createElement("h2");
-
-        title.innerHTML="Ciclo "+cycle;
-
+        const title = document.createElement("div");
+        title.className = "column-title";
+        title.innerText = cycleTitles[c];
         column.appendChild(title);
 
-        grouped[cycle].forEach(course=>{
+        const cycleCourses = coursesData.filter(course => course.cycle === c);
 
-            const card=document.createElement("div");
+        cycleCourses.forEach(course => {
+          const { isUnlocked, missing } = getRequirementStatus(course);
+          const isApproved = state.approved.has(course.id);
 
-            card.className="course";
+          const card = document.createElement("div");
+          card.className = `course-card ${isApproved ? 'approved' : ''} ${!isUnlocked && !isApproved ? 'locked' : ''}`;
+          card.onclick = () => toggleCourse(course.id);
 
-            const enabled=requirementsMet(course);
+          card.innerHTML = `
+            <div class="course-name">${course.name}</div>
+            <div class="course-credits">${course.credits} Créditos</div>
+          `;
 
-            if(!enabled){
+          if (!isUnlocked && !isApproved) {
+            const tooltip = document.createElement("div");
+            tooltip.className = "tooltip";
+            tooltip.innerHTML = `<strong>Falta aprobar:</strong><br>• ${missing.join("<br>• ")}`;
+            card.appendChild(tooltip);
+          }
 
-                card.classList.add("locked");
-
-            }
-
-            if(approved(course.id)){
-
-                card.classList.add("completed");
-
-            }
-
-            card.innerHTML=`
-
-            <h4>${course.name}</h4>
-
-            <small>${course.credits} créditos</small>
-
-            `;
-
-            if(!enabled){
-
-                const tip=document.createElement("div");
-
-                tip.className="tooltip";
-
-                tip.innerHTML="Falta aprobar:<br>"+missingRequirements(course).join("<br>");
-
-                card.appendChild(tip);
-
-            }
-
-            card.onclick=()=>{
-
-                if(!requirementsMet(course)){
-
-                    return;
-
-                }
-
-                if(state[course.id]){
-
-                    state[course.id]=false;
-
-                    uncheckDependents(course.id);
-
-                }
-
-                else{
-
-                    state[course.id]=true;
-
-                }
-
-                updateProgress();
-
-                render();
-
-            };
-
-            column.appendChild(card);
-
+          column.appendChild(card);
         });
 
         grid.appendChild(column);
-
-    });
-
-}
-/*==============================
-    BASE DE DATOS DE CURSOS
-==============================*/
-
-courses.push(
-
-/*==========================
-CICLO 1
-==========================*/
-
-{
-id:"quimica",
-name:"Química",
-cycle:1,
-credits:5,
-prereq:[]
-},
-
-{
-id:"matematica",
-name:"Matemática",
-cycle:1,
-credits:3,
-prereq:[]
-},
-
-{
-id:"lengua_oratoria",
-name:"Lengua y Oratoria",
-cycle:1,
-credits:3,
-prereq:[]
-},
-
-{
-id:"intro_medicina",
-name:"Introducción a la Medicina",
-cycle:1,
-credits:2,
-prereq:[]
-},
-
-{
-id:"desempeno",
-name:"Desempeño Universitario",
-cycle:1,
-credits:2,
-prereq:[]
-},
-
-{
-id:"biologia",
-name:"Biología Celular y Molecular",
-cycle:1,
-credits:6,
-prereq:[]
-},
-
-/*==========================
-CICLO 2
-==========================*/
-
-{
-id:"redaccion",
-name:"Redacción General",
-cycle:2,
-credits:3,
-prereq:["lengua_oratoria"]
-},
-
-{
-id:"realidad",
-name:"Realidad Nacional",
-cycle:2,
-credits:2,
-prereq:[
-"lengua_oratoria",
-"desempeno"
-]
-},
-
-{
-id:"morfo1",
-name:"Morfofisiología I",
-cycle:2,
-credits:6,
-prereq:[
-"biologia"
-]
-},
-
-{
-id:"investigacion",
-name:"Introducción a la Investigación",
-cycle:2,
-credits:3,
-prereq:[]
-},
-
-{
-id:"bioquimica",
-name:"Bioquímica",
-cycle:2,
-credits:5,
-prereq:[
-"quimica"
-]
-},
-
-{
-id:"anatomia",
-name:"Anatomía General",
-cycle:2,
-credits:3,
-prereq:[
-"biologia"
-]
-},
-
-/*==========================
-CICLO 3
-==========================*/
-
-{
-id:"ambiental",
-name:"Educación Ambiental",
-cycle:3,
-credits:2,
-prereq:[]
-},
-
-{
-id:"estadistica",
-name:"Estadística General",
-cycle:3,
-credits:4,
-prereq:[
-"matematica"
-]
-},
-
-{
-id:"filosofia",
-name:"Filosofía",
-cycle:3,
-credits:3,
-prereq:[]
-},
-
-{
-id:"genetica",
-name:"Genética Médica",
-cycle:3,
-credits:3,
-prereq:[
-"biologia"
-]
-},
-
-{
-id:"inmunologia",
-name:"Inmunología",
-cycle:3,
-credits:3,
-prereq:[
-"morfo1"
-]
-},
-
-{
-id:"morfo2",
-name:"Morfofisiología II",
-cycle:3,
-credits:7,
-prereq:[
-"anatomia",
-"morfo1"
-]
-}
-
-);
-
-/*==========================
-CICLO 4
-==========================*/
-
-,
-
-{
-id:"bioetica",
-name:"Bioética",
-cycle:4,
-credits:2,
-prereq:[
-"intro_medicina",
-"redaccion"
-]
-},
-
-{
-id:"desarrollo",
-name:"Desarrollo y Crecimiento",
-cycle:4,
-credits:3,
-prereq:[
-"biologia"
-]
-},
-
-{
-id:"fisiopato1",
-name:"Fisiopatología I",
-cycle:4,
-credits:4,
-prereq:[
-"morfo2"
-]
-},
-
-{
-id:"infectologia",
-name:"Infectología Básica",
-cycle:4,
-credits:5,
-prereq:[
-"bioquimica",
-"morfo1"
-]
-},
-
-{
-id:"morfo3",
-name:"Morfofisiología III",
-cycle:4,
-credits:7,
-prereq:[
-"anatomia",
-"morfo1"
-]
-},
-
-/*==========================
-CICLO 5
-==========================*/
-
-{
-id:"bioestadistica",
-name:"Bioestadística",
-cycle:5,
-credits:2,
-prereq:[
-"estadistica"
-]
-},
-
-{
-id:"fisiopato2",
-name:"Fisiopatología II",
-cycle:5,
-credits:5,
-prereq:[
-"morfo2"
-]
-},
-
-{
-id:"fundamentos",
-name:"Fundamentos de Medicina Intercultural",
-cycle:5,
-credits:2,
-prereq:[
-"filosofia",
-"realidad"
-]
-},
-
-{
-id:"morfo4",
-name:"Morfofisiología IV",
-cycle:5,
-credits:6,
-prereq:[
-"morfo3"
-]
-},
-
-{
-id:"saludmental",
-name:"Salud Mental",
-cycle:5,
-credits:4,
-prereq:[
-"filosofia"
-]
-},
-
-/*==========================
-CICLO 6
-==========================*/
-
-{
-id:"anatpat",
-name:"Anatomía Patológica",
-cycle:6,
-credits:4,
-prereq:[
-"fisiopato2"
-]
-},
-
-{
-id:"apoyo",
-name:"Apoyo al Diagnóstico",
-cycle:6,
-credits:3,
-prereq:[
-"morfo4"
-]
-},
-
-{
-id:"farmaco",
-name:"Farmacología",
-cycle:6,
-credits:6,
-prereq:[
-"infectologia"
-]
-},
-
-{
-id:"semiologia",
-name:"Semiología",
-cycle:6,
-credits:5,
-prereq:[
-"fisiopato1",
-"fisiopato2",
-"inmunologia",
-"morfo2",
-"morfo3",
-"morfo4"
-]
-},
-
-{
-id:"simusemio",
-name:"Semiología basada en la Simulación",
-cycle:6,
-credits:2,
-prereq:[
-"fisiopato1",
-"fisiopato2",
-"inmunologia",
-"morfo2",
-"morfo3",
-"morfo4"
-]
-}
-,
-
-/*==========================
-CICLO 7
-==========================*/
-
-{
-id:"seguridad",
-name:"Seguridad del Paciente y Calidad",
-cycle:7,
-credits:2,
-prereq:["bioetica"]
-},
-
-{
-id:"nutricion",
-name:"Nutrición y Prácticas Saludables",
-cycle:7,
-credits:4,
-prereq:["farmaco"]
-},
-
-{
-id:"metodologia",
-name:"Metodología de la Investigación",
-cycle:7,
-credits:2,
-prereq:["bioestadistica"]
-},
-
-{
-id:"medicina1",
-name:"Medicina Interna I",
-cycle:7,
-credits:10,
-prereq:[
-"anatpat",
-"semiologia",
-"simusemio"
-]
-},
-
-{
-id:"epidemiologia",
-name:"Epidemiología",
-cycle:7,
-credits:4,
-prereq:["bioestadistica"]
-},
-
-/*==========================
-CICLO 8
-==========================*/
-
-{
-id:"aps",
-name:"Atención Primaria en Salud",
-cycle:8,
-credits:4,
-prereq:["epidemiologia"]
-},
-
-{
-id:"mbe",
-name:"Medicina Basada en la Evidencia",
-cycle:8,
-credits:2,
-prereq:[
-"epidemiologia",
-"metodologia"
-]
-},
-
-{
-id:"medicina2",
-name:"Medicina Interna II",
-cycle:8,
-credits:10,
-prereq:["medicina1"]
-},
-
-{
-id:"saludpublica",
-name:"Salud Pública",
-cycle:8,
-credits:4,
-prereq:["epidemiologia"]
-},
-
-/*==========================
-CICLO 9
-==========================*/
-
-{
-id:"medicina3",
-name:"Medicina Interna III",
-cycle:9,
-credits:10,
-prereq:["medicina2"]
-},
-
-{
-id:"medlegal",
-name:"Medicina Legal",
-cycle:9,
-credits:2,
-prereq:[
-"bioetica",
-"semiologia",
-"simusemio"
-]
-},
-
-{
-id:"simuintegrada",
-name:"Simulación Clínica Integrada",
-cycle:9,
-credits:3,
-prereq:["medicina2"]
-},
-
-{
-id:"terapeutica",
-name:"Terapéutica",
-cycle:9,
-credits:2,
-prereq:["medicina2"]
-},
-
-{
-id:"tesis1",
-name:"Tesis I",
-cycle:9,
-credits:2,
-prereq:["mbe"]
-}
-,
-
-/*==========================
-CICLO 10
-==========================*/
-
-{
-id:"casos1",
-name:"Análisis de Casos I",
-cycle:10,
-credits:2,
-prereq:[
-"medicina3",
-"simuintegrada",
-"terapeutica"
-]
-},
-
-{
-id:"cirugia",
-name:"Cirugía",
-cycle:10,
-credits:11,
-prereq:[
-"medicina3",
-"simuintegrada"
-]
-},
-
-{
-id:"paliativos",
-name:"Cuidados Paliativos y Rehabilitación Física",
-cycle:10,
-credits:2,
-prereq:[
-"bioetica",
-"terapeutica"
-]
-},
-
-{
-id:"ecografia",
-name:"Ecografía",
-cycle:10,
-credits:2,
-prereq:[
-"apoyo",
-"semiologia"
-]
-},
-
-{
-id:"simuquirurgica",
-name:"Simulación Quirúrgica",
-cycle:10,
-credits:2,
-prereq:[
-"medicina3",
-"simuintegrada"
-]
-},
-
-/*==========================
-CICLO 11
-==========================*/
-
-{
-id:"gineco",
-name:"Ginecología y Obstetricia",
-cycle:11,
-credits:6,
-prereq:[
-"cirugia",
-"simuquirurgica"
-]
-},
-
-{
-id:"pediatria",
-name:"Pediatría",
-cycle:11,
-credits:10,
-prereq:[
-"medicina3",
-"simuintegrada"
-]
-},
-
-{
-id:"simugineco",
-name:"Simulación Gineco-Obstetricia",
-cycle:11,
-credits:2,
-prereq:[
-"cirugia",
-"simuquirurgica"
-]
-},
-
-{
-id:"simupedia",
-name:"Simulación Pediátrica",
-cycle:11,
-credits:2,
-prereq:[
-"medicina3",
-"simuintegrada"
-]
-},
-
-{
-id:"tesis2",
-name:"Tesis II",
-cycle:11,
-credits:2,
-prereq:[
-"tesis1"
-]
-},
-
-/*==========================
-CICLO 12
-==========================*/
-
-{
-id:"casos2",
-name:"Análisis de Casos II",
-cycle:12,
-credits:2,
-prereq:[
-"casos1",
-"ENGLISH_A2"
-]
-},
-
-{
-id:"gerencia",
-name:"Gerencia en Salud",
-cycle:12,
-credits:2,
-prereq:[
-"aps",
-"ENGLISH_A2"
-]
-},
-
-{
-id:"informatica",
-name:"Informática Biomédica",
-cycle:12,
-credits:2,
-prereq:[
-"aps",
-"ENGLISH_A2"
-]
-},
-
-{
-id:"preinternado",
-name:"Pre-Internado",
-cycle:12,
-credits:16,
-prereq:[
-"tesis2",
-"ENGLISH_B2"
-]
-},
-
-/*==========================
-CICLO 13
-==========================*/
-
-{
-id:"internogine",
-name:"Internado en Ginecología y Obstetricia",
-cycle:13,
-credits:10,
-prereq:[
-"preinternado",
-"ELECTIVE_8",
-"MEDICAL_EXAM"
-]
-},
-
-{
-id:"internocirugia",
-name:"Internado en Cirugía",
-cycle:13,
-credits:10,
-prereq:[
-"preinternado",
-"ELECTIVE_8",
-"MEDICAL_EXAM"
-]
-},
-
-{
-id:"internomedicina",
-name:"Internado en Medicina",
-cycle:13,
-credits:10,
-prereq:[
-"preinternado",
-"ELECTIVE_8",
-"MEDICAL_EXAM"
-]
-},
-
-{
-id:"internopediatria",
-name:"Internado en Pediatría",
-cycle:13,
-credits:10,
-prereq:[
-"preinternado",
-"ELECTIVE_8",
-"MEDICAL_EXAM"
-]
-},
-
-{
-id:"trabajoinvestigacion",
-name:"Trabajo de Investigación",
-cycle:13,
-credits:1,
-prereq:[
-"preinternado",
-"ELECTIVE_8",
-"MEDICAL_EXAM"
-]
-},
-
-/*==========================
-CURSOS ELECTIVOS
-==========================*/
-
-{
-id:"electivo1",
-name:"Uso Correcto de Antibióticos y M. de Infecciones",
-cycle:13,
-credits:2,
-elective:true,
-prereq:[]
-},
-
-{
-id:"electivo2",
-name:"Simulación en Salud",
-cycle:13,
-credits:2,
-elective:true,
-prereq:[]
-},
-
-{
-id:"electivo3",
-name:"Radioanatomía",
-cycle:13,
-credits:2,
-elective:true,
-prereq:[]
-},
-
-{
-id:"electivo4",
-name:"Procesos Cognitivos y Teorías del Aprendizaje",
-cycle:13,
-credits:2,
-elective:true,
-prereq:[]
-},
-
-{
-id:"electivo5",
-name:"Primeros Auxilios (E)",
-cycle:13,
-credits:2,
-elective:true,
-prereq:[]
-}
-);
-
-load();
-
-render();
-
-updateProgress();
-/*==============================
-EVENTOS
-==============================*/
-
-document.getElementById("englishA2").onchange=()=>{
-
-render();
-updateProgress();
-
-};
-
-document.getElementById("englishB2").onchange=()=>{
-
-render();
-updateProgress();
-
-};
-
-document.getElementById("medicalExam").onchange=()=>{
-
-render();
-updateProgress();
-
-};
-
-document.getElementById("electiveCredits").oninput=()=>{
-
-render();
-updateProgress();
-
-};
-
-document.getElementById("reset").onclick=()=>{
-
-if(confirm("¿Deseas reiniciar todo el progreso?")){
-
-state={};
-
-localStorage.clear();
-
-document.getElementById("englishA2").checked=false;
-
-document.getElementById("englishB2").checked=false;
-
-document.getElementById("medicalExam").checked=false;
-
-document.getElementById("electiveCredits").value=0;
-
-render();
-
-updateProgress();
-
-}
-
-};
-
-</script>
-
+      }
+
+      let totalCredits = 0;
+      coursesData.forEach(c => {
+        if (state.approved.has(c.id)) totalCredits += c.credits;
+      });
+
+      document.getElementById("total-credits").innerText = totalCredits;
+      document.getElementById("approved-courses").innerText = state.approved.size;
+    }
+
+    loadState();
+    render();
+  </script>
 </body>
 </html>
