@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Malla Curricular Medicina</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+
+background:#edf3f8;
+display:flex;
+min-height:100vh;
+
+}
+
+aside{
+
+width:320px;
+background:white;
+padding:25px;
+box-shadow:0 0 20px rgba(0,0,0,.1);
+position:sticky;
+top:0;
+height:100vh;
+overflow:auto;
+
+}
+
+aside h1{
+
+font-size:24px;
+margin-bottom:20px;
+color:#355C7D;
+
+}
+
+.info{
+
+margin-bottom:18px;
+
+}
+
+.info h3{
+
+margin-bottom:8px;
+
+}
+
+.progress{
+
+width:100%;
+height:18px;
+background:#d9d9d9;
+border-radius:20px;
+overflow:hidden;
+
+}
+
+.progress div{
+
+height:100%;
+background:#4CAF50;
+width:0%;
+
+}
+
+label{
+
+display:block;
+margin-top:12px;
+
+}
+
+input[type=checkbox]{
+
+margin-right:8px;
+
+}
+
+main{
+
+flex:1;
+padding:25px;
+overflow:auto;
+
+}
+
+.grid{
+
+display:grid;
+grid-template-columns:repeat(13,minmax(260px,1fr));
+gap:18px;
+
+}
+
+.column{
+
+background:#f7fbff;
+padding:15px;
+border-radius:15px;
+box-shadow:0 5px 10px rgba(0,0,0,.08);
+
+}
+
+.column h2{
+
+text-align:center;
+margin-bottom:15px;
+color:#355C7D;
+
+}
+
+.course{
+
+background:white;
+padding:12px;
+margin-bottom:10px;
+border-radius:10px;
+cursor:pointer;
+transition:.3s;
+border-left:6px solid #4CAF50;
+position:relative;
+
+}
+
+.course:hover{
+
+transform:translateY(-2px);
+
+}
+
+.course.locked{
+
+background:#dddddd;
+border-left:6px solid #999;
+cursor:not-allowed;
+opacity:.7;
+
+}
+
+.course.completed{
+
+background:#b9f6ca;
+border-left:6px solid #009688;
+
+}
+
+.course h4{
+
+font-size:15px;
+
+}
+
+.course small{
+
+color:#555;
+
+}
+
+.tooltip{
+
+position:absolute;
+bottom:105%;
+left:0;
+background:#222;
+color:white;
+padding:8px;
+border-radius:8px;
+font-size:12px;
+display:none;
+z-index:100;
+
+}
+
+.course.locked:hover .tooltip{
+
+display:block;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<aside>
+
+<h1>Medicina Humana</h1>
+
+<div class="info">
+
+<h3>Avance</h3>
+
+<div class="progress">
+
+<div id="bar"></div>
+
+</div>
+
+<p id="percent">0%</p>
+
+</div>
+
+<div class="info">
+
+<h3>Créditos aprobados</h3>
+
+<p id="credits">0</p>
+
+</div>
+
+<div class="info">
+
+<h3>Requisitos</h3>
+
+<label>
+
+<input id="englishA2" type="checkbox">
+
+Inglés A2
+
+</label>
+
+<label>
+
+<input id="englishB2" type="checkbox">
+
+Inglés B2
+
+</label>
+
+<label>
+
+<input id="medicalExam" type="checkbox">
+
+Examen suficiencia médica
+
+</label>
+
+</div>
+
+<div class="info">
+
+<h3>Créditos electivos</h3>
+
+<input id="electiveCredits" type="number" min="0" max="20" value="0">
+
+</div>
+
+<button id="reset">
+
+Reiniciar progreso
+
+</button>
+
+</aside>
+
+<main>
+
+<div class="grid" id="grid">
+
+<!-- Aquí aparecerán los 13 ciclos -->
+
+</div>
+
+</main>
+
+<script>
+
+const courses=[];
+
+let state={};
+
+function save(){
+
+localStorage.setItem("medicina_estado",JSON.stringify(state));
+
+}
+
+function load(){
+
+const s=localStorage.getItem("medicina_estado");
+
+if(s){
+
+state=JSON.parse(s);
+
+}
+
+}
+
+function approved(id){
+
+return state[id]===true;
+
+}
+
+function updateProgress(){
+
+let total=courses.length;
+
+let done=0;
+
+let credits=0;
+
+courses.forEach(c=>{
+
+if(approved(c.id)){
+
+done++;
+
+credits+=c.credits;
+
+}
+
+});
+
+document.getElementById("credits").innerHTML=credits;
+
+let p=Math.round(done*100/total);
+
+document.getElementById("percent").innerHTML=p+"%";
+
+document.getElementById("bar").style.width=p+"%";
+
+save();
+
+}
+function requirementsMet(course){
+
+    if(!course.prereq || course.prereq.length===0){
+        return true;
+    }
+
+    for(const req of course.prereq){
+
+        if(req==="ENGLISH_A2"){
+
+            if(!document.getElementById("englishA2").checked){
+                return false;
+            }
+
+        }
+
+        else if(req==="ENGLISH_B2"){
+
+            if(!document.getElementById("englishB2").checked){
+                return false;
+            }
+
+        }
+
+        else if(req==="MEDICAL_EXAM"){
+
+            if(!document.getElementById("medicalExam").checked){
+                return false;
+            }
+
+        }
+
+        else if(req==="ELECTIVE_8"){
+
+            const e=parseInt(document.getElementById("electiveCredits").value)||0;
+
+            if(e<8){
+                return false;
+            }
+
+        }
+
+        else{
+
+            if(!approved(req)){
+                return false;
+            }
+
+        }
+
+    }
+
+    return true;
+
+}
+
+function missingRequirements(course){
+
+    let list=[];
+
+    if(!course.prereq) return list;
+
+    course.prereq.forEach(req=>{
+
+        if(req==="ENGLISH_A2"){
+
+            if(!document.getElementById("englishA2").checked){
+
+                list.push("Inglés A2");
+
+            }
+
+        }
+
+        else if(req==="ENGLISH_B2"){
+
+            if(!document.getElementById("englishB2").checked){
+
+                list.push("Inglés B2");
+
+            }
+
+        }
+
+        else if(req==="MEDICAL_EXAM"){
+
+            if(!document.getElementById("medicalExam").checked){
+
+                list.push("Examen de suficiencia médica");
+
+            }
+
+        }
+
+        else if(req==="ELECTIVE_8"){
+
+            const e=parseInt(document.getElementById("electiveCredits").value)||0;
+
+            if(e<8){
+
+                list.push("8 créditos electivos");
+
+            }
+
+        }
+
+        else{
+
+            if(!approved(req)){
+
+                const c=courses.find(x=>x.id===req);
+
+                if(c){
+
+                    list.push(c.name);
+
+                }
+
+            }
+
+        }
+
+    });
+
+    return list;
+
+}
+
+function uncheckDependents(id){
+
+    courses.forEach(c=>{
+
+        if(c.prereq && c.prereq.includes(id)){
+
+            if(state[c.id]){
+
+                state[c.id]=false;
+
+                uncheckDependents(c.id);
+
+            }
+
+        }
+
+    });
+
+}
+
+function render(){
+
+    const grid=document.getElementById("grid");
+
+    grid.innerHTML="";
+
+    const grouped={};
+
+    courses.forEach(c=>{
+
+        if(!grouped[c.cycle]){
+
+            grouped[c.cycle]=[];
+
+        }
+
+        grouped[c.cycle].push(c);
+
+    });
+
+    Object.keys(grouped).forEach(cycle=>{
+
+        const column=document.createElement("div");
+
+        column.className="column";
+
+        const title=document.createElement("h2");
+
+        title.innerHTML="Ciclo "+cycle;
+
+        column.appendChild(title);
+
+        grouped[cycle].forEach(course=>{
+
+            const card=document.createElement("div");
+
+            card.className="course";
+
+            const enabled=requirementsMet(course);
+
+            if(!enabled){
+
+                card.classList.add("locked");
+
+            }
+
+            if(approved(course.id)){
+
+                card.classList.add("completed");
+
+            }
+
+            card.innerHTML=`
+
+            <h4>${course.name}</h4>
+
+            <small>${course.credits} créditos</small>
+
+            `;
+
+            if(!enabled){
+
+                const tip=document.createElement("div");
+
+                tip.className="tooltip";
+
+                tip.innerHTML="Falta aprobar:<br>"+missingRequirements(course).join("<br>");
+
+                card.appendChild(tip);
+
+            }
+
+            card.onclick=()=>{
+
+                if(!requirementsMet(course)){
+
+                    return;
+
+                }
+
+                if(state[course.id]){
+
+                    state[course.id]=false;
+
+                    uncheckDependents(course.id);
+
+                }
+
+                else{
+
+                    state[course.id]=true;
+
+                }
+
+                updateProgress();
+
+                render();
+
+            };
+
+            column.appendChild(card);
+
+        });
+
+        grid.appendChild(column);
+
+    });
+
+}
+/*==============================
+    BASE DE DATOS DE CURSOS
+==============================*/
+
+courses.push(
+
+/*==========================
+CICLO 1
+==========================*/
+
+{
+id:"quimica",
+name:"Química",
+cycle:1,
+credits:5,
+prereq:[]
+},
+
+{
+id:"matematica",
+name:"Matemática",
+cycle:1,
+credits:3,
+prereq:[]
+},
+
+{
+id:"lengua_oratoria",
+name:"Lengua y Oratoria",
+cycle:1,
+credits:3,
+prereq:[]
+},
+
+{
+id:"intro_medicina",
+name:"Introducción a la Medicina",
+cycle:1,
+credits:2,
+prereq:[]
+},
+
+{
+id:"desempeno",
+name:"Desempeño Universitario",
+cycle:1,
+credits:2,
+prereq:[]
+},
+
+{
+id:"biologia",
+name:"Biología Celular y Molecular",
+cycle:1,
+credits:6,
+prereq:[]
+},
+
+/*==========================
+CICLO 2
+==========================*/
+
+{
+id:"redaccion",
+name:"Redacción General",
+cycle:2,
+credits:3,
+prereq:["lengua_oratoria"]
+},
+
+{
+id:"realidad",
+name:"Realidad Nacional",
+cycle:2,
+credits:2,
+prereq:[
+"lengua_oratoria",
+"desempeno"
+]
+},
+
+{
+id:"morfo1",
+name:"Morfofisiología I",
+cycle:2,
+credits:6,
+prereq:[
+"biologia"
+]
+},
+
+{
+id:"investigacion",
+name:"Introducción a la Investigación",
+cycle:2,
+credits:3,
+prereq:[]
+},
+
+{
+id:"bioquimica",
+name:"Bioquímica",
+cycle:2,
+credits:5,
+prereq:[
+"quimica"
+]
+},
+
+{
+id:"anatomia",
+name:"Anatomía General",
+cycle:2,
+credits:3,
+prereq:[
+"biologia"
+]
+},
+
+/*==========================
+CICLO 3
+==========================*/
+
+{
+id:"ambiental",
+name:"Educación Ambiental",
+cycle:3,
+credits:2,
+prereq:[]
+},
+
+{
+id:"estadistica",
+name:"Estadística General",
+cycle:3,
+credits:4,
+prereq:[
+"matematica"
+]
+},
+
+{
+id:"filosofia",
+name:"Filosofía",
+cycle:3,
+credits:3,
+prereq:[]
+},
+
+{
+id:"genetica",
+name:"Genética Médica",
+cycle:3,
+credits:3,
+prereq:[
+"biologia"
+]
+},
+
+{
+id:"inmunologia",
+name:"Inmunología",
+cycle:3,
+credits:3,
+prereq:[
+"morfo1"
+]
+},
+
+{
+id:"morfo2",
+name:"Morfofisiología II",
+cycle:3,
+credits:7,
+prereq:[
+"anatomia",
+"morfo1"
+]
+}
+
+);
+
+/*==========================
+CICLO 4
+==========================*/
+
+,
+
+{
+id:"bioetica",
+name:"Bioética",
+cycle:4,
+credits:2,
+prereq:[
+"intro_medicina",
+"redaccion"
+]
+},
+
+{
+id:"desarrollo",
+name:"Desarrollo y Crecimiento",
+cycle:4,
+credits:3,
+prereq:[
+"biologia"
+]
+},
+
+{
+id:"fisiopato1",
+name:"Fisiopatología I",
+cycle:4,
+credits:4,
+prereq:[
+"morfo2"
+]
+},
+
+{
+id:"infectologia",
+name:"Infectología Básica",
+cycle:4,
+credits:5,
+prereq:[
+"bioquimica",
+"morfo1"
+]
+},
+
+{
+id:"morfo3",
+name:"Morfofisiología III",
+cycle:4,
+credits:7,
+prereq:[
+"anatomia",
+"morfo1"
+]
+},
+
+/*==========================
+CICLO 5
+==========================*/
+
+{
+id:"bioestadistica",
+name:"Bioestadística",
+cycle:5,
+credits:2,
+prereq:[
+"estadistica"
+]
+},
+
+{
+id:"fisiopato2",
+name:"Fisiopatología II",
+cycle:5,
+credits:5,
+prereq:[
+"morfo2"
+]
+},
+
+{
+id:"fundamentos",
+name:"Fundamentos de Medicina Intercultural",
+cycle:5,
+credits:2,
+prereq:[
+"filosofia",
+"realidad"
+]
+},
+
+{
+id:"morfo4",
+name:"Morfofisiología IV",
+cycle:5,
+credits:6,
+prereq:[
+"morfo3"
+]
+},
+
+{
+id:"saludmental",
+name:"Salud Mental",
+cycle:5,
+credits:4,
+prereq:[
+"filosofia"
+]
+},
+
+/*==========================
+CICLO 6
+==========================*/
+
+{
+id:"anatpat",
+name:"Anatomía Patológica",
+cycle:6,
+credits:4,
+prereq:[
+"fisiopato2"
+]
+},
+
+{
+id:"apoyo",
+name:"Apoyo al Diagnóstico",
+cycle:6,
+credits:3,
+prereq:[
+"morfo4"
+]
+},
+
+{
+id:"farmaco",
+name:"Farmacología",
+cycle:6,
+credits:6,
+prereq:[
+"infectologia"
+]
+},
+
+{
+id:"semiologia",
+name:"Semiología",
+cycle:6,
+credits:5,
+prereq:[
+"fisiopato1",
+"fisiopato2",
+"inmunologia",
+"morfo2",
+"morfo3",
+"morfo4"
+]
+},
+
+{
+id:"simusemio",
+name:"Semiología basada en la Simulación",
+cycle:6,
+credits:2,
+prereq:[
+"fisiopato1",
+"fisiopato2",
+"inmunologia",
+"morfo2",
+"morfo3",
+"morfo4"
+]
+}
+,
+
+/*==========================
+CICLO 7
+==========================*/
+
+{
+id:"seguridad",
+name:"Seguridad del Paciente y Calidad",
+cycle:7,
+credits:2,
+prereq:["bioetica"]
+},
+
+{
+id:"nutricion",
+name:"Nutrición y Prácticas Saludables",
+cycle:7,
+credits:4,
+prereq:["farmaco"]
+},
+
+{
+id:"metodologia",
+name:"Metodología de la Investigación",
+cycle:7,
+credits:2,
+prereq:["bioestadistica"]
+},
+
+{
+id:"medicina1",
+name:"Medicina Interna I",
+cycle:7,
+credits:10,
+prereq:[
+"anatpat",
+"semiologia",
+"simusemio"
+]
+},
+
+{
+id:"epidemiologia",
+name:"Epidemiología",
+cycle:7,
+credits:4,
+prereq:["bioestadistica"]
+},
+
+/*==========================
+CICLO 8
+==========================*/
+
+{
+id:"aps",
+name:"Atención Primaria en Salud",
+cycle:8,
+credits:4,
+prereq:["epidemiologia"]
+},
+
+{
+id:"mbe",
+name:"Medicina Basada en la Evidencia",
+cycle:8,
+credits:2,
+prereq:[
+"epidemiologia",
+"metodologia"
+]
+},
+
+{
+id:"medicina2",
+name:"Medicina Interna II",
+cycle:8,
+credits:10,
+prereq:["medicina1"]
+},
+
+{
+id:"saludpublica",
+name:"Salud Pública",
+cycle:8,
+credits:4,
+prereq:["epidemiologia"]
+},
+
+/*==========================
+CICLO 9
+==========================*/
+
+{
+id:"medicina3",
+name:"Medicina Interna III",
+cycle:9,
+credits:10,
+prereq:["medicina2"]
+},
+
+{
+id:"medlegal",
+name:"Medicina Legal",
+cycle:9,
+credits:2,
+prereq:[
+"bioetica",
+"semiologia",
+"simusemio"
+]
+},
+
+{
+id:"simuintegrada",
+name:"Simulación Clínica Integrada",
+cycle:9,
+credits:3,
+prereq:["medicina2"]
+},
+
+{
+id:"terapeutica",
+name:"Terapéutica",
+cycle:9,
+credits:2,
+prereq:["medicina2"]
+},
+
+{
+id:"tesis1",
+name:"Tesis I",
+cycle:9,
+credits:2,
+prereq:["mbe"]
+}
+,
+
+/*==========================
+CICLO 10
+==========================*/
+
+{
+id:"casos1",
+name:"Análisis de Casos I",
+cycle:10,
+credits:2,
+prereq:[
+"medicina3",
+"simuintegrada",
+"terapeutica"
+]
+},
+
+{
+id:"cirugia",
+name:"Cirugía",
+cycle:10,
+credits:11,
+prereq:[
+"medicina3",
+"simuintegrada"
+]
+},
+
+{
+id:"paliativos",
+name:"Cuidados Paliativos y Rehabilitación Física",
+cycle:10,
+credits:2,
+prereq:[
+"bioetica",
+"terapeutica"
+]
+},
+
+{
+id:"ecografia",
+name:"Ecografía",
+cycle:10,
+credits:2,
+prereq:[
+"apoyo",
+"semiologia"
+]
+},
+
+{
+id:"simuquirurgica",
+name:"Simulación Quirúrgica",
+cycle:10,
+credits:2,
+prereq:[
+"medicina3",
+"simuintegrada"
+]
+},
+
+/*==========================
+CICLO 11
+==========================*/
+
+{
+id:"gineco",
+name:"Ginecología y Obstetricia",
+cycle:11,
+credits:6,
+prereq:[
+"cirugia",
+"simuquirurgica"
+]
+},
+
+{
+id:"pediatria",
+name:"Pediatría",
+cycle:11,
+credits:10,
+prereq:[
+"medicina3",
+"simuintegrada"
+]
+},
+
+{
+id:"simugineco",
+name:"Simulación Gineco-Obstetricia",
+cycle:11,
+credits:2,
+prereq:[
+"cirugia",
+"simuquirurgica"
+]
+},
+
+{
+id:"simupedia",
+name:"Simulación Pediátrica",
+cycle:11,
+credits:2,
+prereq:[
+"medicina3",
+"simuintegrada"
+]
+},
+
+{
+id:"tesis2",
+name:"Tesis II",
+cycle:11,
+credits:2,
+prereq:[
+"tesis1"
+]
+},
+
+/*==========================
+CICLO 12
+==========================*/
+
+{
+id:"casos2",
+name:"Análisis de Casos II",
+cycle:12,
+credits:2,
+prereq:[
+"casos1",
+"ENGLISH_A2"
+]
+},
+
+{
+id:"gerencia",
+name:"Gerencia en Salud",
+cycle:12,
+credits:2,
+prereq:[
+"aps",
+"ENGLISH_A2"
+]
+},
+
+{
+id:"informatica",
+name:"Informática Biomédica",
+cycle:12,
+credits:2,
+prereq:[
+"aps",
+"ENGLISH_A2"
+]
+},
+
+{
+id:"preinternado",
+name:"Pre-Internado",
+cycle:12,
+credits:16,
+prereq:[
+"tesis2",
+"ENGLISH_B2"
+]
+},
+
+/*==========================
+CICLO 13
+==========================*/
+
+{
+id:"internogine",
+name:"Internado en Ginecología y Obstetricia",
+cycle:13,
+credits:10,
+prereq:[
+"preinternado",
+"ELECTIVE_8",
+"MEDICAL_EXAM"
+]
+},
+
+{
+id:"internocirugia",
+name:"Internado en Cirugía",
+cycle:13,
+credits:10,
+prereq:[
+"preinternado",
+"ELECTIVE_8",
+"MEDICAL_EXAM"
+]
+},
+
+{
+id:"internomedicina",
+name:"Internado en Medicina",
+cycle:13,
+credits:10,
+prereq:[
+"preinternado",
+"ELECTIVE_8",
+"MEDICAL_EXAM"
+]
+},
+
+{
+id:"internopediatria",
+name:"Internado en Pediatría",
+cycle:13,
+credits:10,
+prereq:[
+"preinternado",
+"ELECTIVE_8",
+"MEDICAL_EXAM"
+]
+},
+
+{
+id:"trabajoinvestigacion",
+name:"Trabajo de Investigación",
+cycle:13,
+credits:1,
+prereq:[
+"preinternado",
+"ELECTIVE_8",
+"MEDICAL_EXAM"
+]
+},
+
+/*==========================
+CURSOS ELECTIVOS
+==========================*/
+
+{
+id:"electivo1",
+name:"Uso Correcto de Antibióticos y M. de Infecciones",
+cycle:13,
+credits:2,
+elective:true,
+prereq:[]
+},
+
+{
+id:"electivo2",
+name:"Simulación en Salud",
+cycle:13,
+credits:2,
+elective:true,
+prereq:[]
+},
+
+{
+id:"electivo3",
+name:"Radioanatomía",
+cycle:13,
+credits:2,
+elective:true,
+prereq:[]
+},
+
+{
+id:"electivo4",
+name:"Procesos Cognitivos y Teorías del Aprendizaje",
+cycle:13,
+credits:2,
+elective:true,
+prereq:[]
+},
+
+{
+id:"electivo5",
+name:"Primeros Auxilios (E)",
+cycle:13,
+credits:2,
+elective:true,
+prereq:[]
+}
+);
+
+load();
+
+render();
+
+updateProgress();
+/*==============================
+EVENTOS
+==============================*/
+
+document.getElementById("englishA2").onchange=()=>{
+
+render();
+updateProgress();
+
+};
+
+document.getElementById("englishB2").onchange=()=>{
+
+render();
+updateProgress();
+
+};
+
+document.getElementById("medicalExam").onchange=()=>{
+
+render();
+updateProgress();
+
+};
+
+document.getElementById("electiveCredits").oninput=()=>{
+
+render();
+updateProgress();
+
+};
+
+document.getElementById("reset").onclick=()=>{
+
+if(confirm("¿Deseas reiniciar todo el progreso?")){
+
+state={};
+
+localStorage.clear();
+
+document.getElementById("englishA2").checked=false;
+
+document.getElementById("englishB2").checked=false;
+
+document.getElementById("medicalExam").checked=false;
+
+document.getElementById("electiveCredits").value=0;
+
+render();
+
+updateProgress();
+
+}
+
+};
+
+</script>
+
+</body>
+</html>
